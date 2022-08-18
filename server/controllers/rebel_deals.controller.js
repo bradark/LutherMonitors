@@ -5,6 +5,8 @@ const { getDeals, addDeal, getLink, getTesthook } = require('./../models/rebel_d
 
 const { sendToWebhook, sendToHFWebhook, sendToPriceErrorWebhook } =  require('./../controllers/discord.controller');
 
+const monitorIntervarl = 60000;
+
 let STATUS = 'STOPPED';
 
 async function scrapeHtml(link){
@@ -133,7 +135,7 @@ async function monitor(){
     loadDeals(link);
     const interval = setInterval(function() {
       scrapeHtml(link);
-    }, 120000);
+    }, monitorIntervarl);
 }
 
 async function getStatus(){

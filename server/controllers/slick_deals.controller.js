@@ -1,10 +1,11 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
-const request = require('request');
 
 const { getDeals, addDeal, getLink, getTesthook } = require('./../models/slick_deals.model');
 
 const { sendToWebhook, sendToHFWebhook, sendToPriceErrorWebhook } =  require('./../controllers/discord.controller');
+
+const monitorIntervarl = 150000;
 
 let STATUS = 'STOPPED';
 
@@ -77,20 +78,20 @@ async function parsePosts(html){
   });
 }
 
-async function start(){
+async function monitor(){
   let link = await getLink();
   loadDeals(link);
   const interval = setInterval(function() {
-    console.log('Slick Deals ==> CHECKED');
     scrapeHtml(link);
-  }, 60000);
+    console.log('Slick Deals ==> CHECKED');
+  }, monitorIntervarl);
 }
 
 async function getStatus(req, res) {
   res.send(STATUS);
 }
 
-start();
+monitor();
 
 module.exports = {
   getStatus,

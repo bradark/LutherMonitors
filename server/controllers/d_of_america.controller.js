@@ -1,8 +1,13 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
-const request = require('request');
 
-const {getFreebieLink,} = require('./../models/d_of_america.model.js');
+const {getFreebieLink, addFreebie, getFreebies} = require('./../models/d_of_america.model.js');
+
+const { sendToWebhook, sendToHFWebhook, sendToPriceErrorWebhook, sendToFreebieWebhook } =  require('./../controllers/discord.controller');
+
+const monitorIntervarl = 60000;
+
+let STATUS = 'STOPPED';
 
 async function scrapeHtml(link){
   axios.get(link).then((res) => {
@@ -12,29 +17,75 @@ async function scrapeHtml(link){
   });
 }
 
+async function loadDeals(link){
+  axios.get(link).then((res) => {
+    console.log('DofA Freebies ==> LOADED');
+    loadData(res.data);
+  }).catch((err) => {
+    console.log(err);
+  });
+}
+
+async function loadData(html){
+  const $ = cheerio.load(html);
+  $('.deal').each(async(index, element) => {
+    let freebieData = {
+      title: $(element).find('.title').text(),
+      link: $(element).find('.title').find('a').attr('href')
+    }
+    let newF = await newFreebie(freebieData);
+    if(newF == true){
+      addFreebie(freebieData);
+    }
+  });
+}
+
 async function parseFreebies(html){
   const $ = cheerio.load(html);
   $('.deal').each(async(index, element) => {
     let freebieData = {
       title: $(element).find('.title').text(),
-      link: $(element).find('a').first().attr('href')
+      link: $(element).find('.title').find('a').attr('href')
     }
-    console.log(freebieData);
+    let newF = await newFreebie(freebieData);
+    if(newF == true){
+      addFreebie(freebieData);
+      sendToFreebieWebhook(`${freebieData.title} --- ${freebieData.link}`);
+    }
   });
 }
 
-async function start() {
+async function newFreebie(freebie){
+  return new Promise(async (resolve, reject) => {
+    var contains = true;
+    let freebies = await getFreebies();
+    freebies.forEach((item, i) => {
+      if(item.title == freebie.title){
+        contains = false;
+      }
+    });
+    resolve(contains);
+  });
+}
+
+async function monitor() {
   let link = await getFreebieLink();
-  scrapeHtml(link);
+  STATUS = 'RUNNING';
+  loadDeals(link);
   const interval = setInterval( async function() {
-    let link = await getFreebieLink();
     scrapeHtml(link);
-  }, 300000)
+    console.log('DofA ==> CHECKED');
+  }, monitorIntervarl)
 }
 
-async function test(){
-  let link = await getFreebieLink();
-  scrapeHtml(link);
+async function getStatus(){
+  return new Promise((resolve, reject) => {
+    resolve(STATUS);
+  });
 }
 
-test();
+monitor();
+
+module.exports = {
+  getStatus,
+}

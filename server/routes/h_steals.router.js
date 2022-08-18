@@ -1,10 +1,9 @@
 const express = require('express');
 
-const {start, getAllDeals} = require('./../controllers/h_steals.controller');
+const { getStatus } = require('./../controllers/h_steals.controller');
 
 const hStealsRouter = express.Router();
 
-hStealsRouter.get('/start', start);
-hStealsRouter.get('/deals', getAllDeals);
+hStealsRouter.get('/status', getStatus);
 
 module.exports = hStealsRouter;

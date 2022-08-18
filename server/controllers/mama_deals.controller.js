@@ -1,10 +1,11 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
-const request = require('request');
 
 const { getDeals, addDeal, getLink, getTestHook } = require('./../models/mama_deals.model');
 
 const { sendToWebhook, sendToHFWebhook, sendToPriceErrorWebhook } =  require('./../controllers/discord.controller');
+
+const monitorIntervarl = 60000;
 
 let STATUS = 'STOPPED';
 
@@ -103,7 +104,7 @@ async function loadData(html){
     loadDeals(link);
     const interval = setInterval(function() {
       scrapeHtml(link);
-    }, 120000);
+    }, monitorIntervarl);
   }
   
   async function getStatus(req, res) {

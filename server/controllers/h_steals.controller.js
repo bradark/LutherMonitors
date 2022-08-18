@@ -1,13 +1,13 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
-const request = require('request');
 
-const { getWebhooks, getDeals, getHStealsLink, addDeal } = require('./../../models/h_steals.model.js');
-const { sendToWebhook, } = require('./../../models/discord.model.js');
+const { getLink, getDeals, getTesthook, addDeal } = require('./../models/h_steals.model.js');
 
-const hStealsLink = 'https://www.heavenlysteals.com/search/label/Hot%20Deals';
+const { sendToWebhook, } = require('./../controllers/discord.controller.js');
 
-const stealsWebHook = 'https://discord.com/api/webhooks/1003920354072338513/nrzmH4Sn-fWAd09_WQVEiaMuxvjP_l29ISNDOsPuSrWdurYx_Uhm1EtxeFU5FEzo0d9I';
+const monitorIntervarl = 60000;
+
+let STATUS = 'STOPPED';
 
 async function scrapeHtml(link){
     axios.get(link).then((res) => {
@@ -15,6 +15,31 @@ async function scrapeHtml(link){
     }).catch((err) => {
       console.log(err);
     });
+}
+
+async function loadDeals(link){
+  axios.get(link).then((res) => {
+    console.log('Heavenly Steals ==> LOADED');
+    loadData(res.data);
+  }).catch((err) => {
+    console.log(err);
+  });
+}
+
+async function loadData(html){
+  const $ = cheerio.load(html);
+  $('.post-outer').each( async(index, element) => {
+    let title = $(element).find('a').text();
+    let link = $(element).find('a').attr('href');
+    let dealData = {
+      title: title,
+      link: link,
+    }
+    let isNew = await newDeal(dealData);
+    if(isNew == true){
+      addDeal(dealData);
+    }
+  });
 }
 
 async function parseDeals(html){
@@ -29,7 +54,7 @@ async function parseDeals(html){
     let isNew = await newDeal(dealData);
     if(isNew == true){
       addDeal(dealData);
-      sendToWebhook(`${dealData.title}  LINK: ${dealData.link}`, stealsWebHook);
+      sendToWebhook(`${dealData.title}  LINK: ${dealData.link}`, await getTesthook());
     }
   });
 }
@@ -51,20 +76,24 @@ async function getAllDeals(req, res) {
   res.json(getDeals());
 }
 
-async function start(req, res) {
-  let url = await getHStealsLink();
-  scrapeHtml(url);
-  //res.send('HSteals Monitor Started');
+async function monitor(req, res) {
+  let link = await getLink();
+  STATUS = 'RUNNING';
+  loadDeals(link);
   const interval = setInterval( async function() {
-    console.log('=> heavenly steals checked');
-    let url = await getHStealsLink();
-    scrapeHtml(url);
-  }, 60000);
+    scrapeHtml(link);
+    console.log('heavenly steals ==> CHECKED');
+  }, monitorIntervarl);
 }
 
-start();
+async function getStatus(){
+  return new Promise((resolve, reject) => {
+    resolve(STATUS);
+  });
+}
+
+monitor();
 
 module.exports = {
-  start,
-  getAllDeals,
+  getStatus,
 };
