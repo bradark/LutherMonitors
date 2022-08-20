@@ -1,5 +1,6 @@
 const request = require('request');
 
+const hStealsWebhook = 'https://discord.com/api/webhooks/1003920354072338513/nrzmH4Sn-fWAd09_WQVEiaMuxvjP_l29ISNDOsPuSrWdurYx_Uhm1EtxeFU5FEzo0d9I';
 const hStealsTesthook = 'https://discord.com/api/webhooks/1009687192504913970/fuxNpporXyfdBLw5DBrnCAHM7J1vvob9kw15bFAjQjodG1mecZAM97Uf205Yyb6zEY9M';
 const hStealsLink = 'https://www.heavenlysteals.com/search/label/Hot%20Deals';
 

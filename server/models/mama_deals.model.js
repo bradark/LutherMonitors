@@ -1,4 +1,5 @@
 const mDealsTestHook = 'https://discord.com/api/webhooks/1006760444020670525/PKH24ohpwhu0CrnbqpgsMj9g3jVrhOYr0m9MyvoVwh1GZFW-yo9-_9gEz7RKTuuj8HdH';
+const mDealsWebhook = 'https://discord.com/api/webhooks/1005365559145283605/ZKCkfrZOpGgz8I9X3j91bE5s40iqe6dc91uPBvIPbpMZ_dJOY4RZbWULGNzbuirHuf5b';
 const mDealsLink = 'https://t.me/s/mamadeals1';
 
 const hotDeals = [];

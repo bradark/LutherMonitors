@@ -103,7 +103,7 @@ async function testFilters(dealTxt){
       if(isNew == true){
         console.log(`NEW DEAL => ${dealTxt}`);
           addDeal(`${dealTxt}`);
-          if(dealTxt.toLowerCase().includes('run')){
+          if(dealTxt.toLowerCase().includes('run') || dealTxt.toLowerCase().includes('stacking')){
             sendToHFWebhook(`${dealTxt}`);
           }
           if(dealTxt.toLowerCase().includes('error') || dealTxt.toLowerCase().includes('glitch')){
