@@ -6,6 +6,8 @@ const slickDealsMonitorRouter = require('./routes/slick_deals.router.js');
 const mamaDealsRouter = require('./routes/mama_deals.router.js');
 const rebelDealsRouter = require('./routes/rebel_deals.router.js');
 const dealsOfAmericaRouter = require('./routes/d_of_america.router.js');
+const mFreeSamplesRouter = require('./routes/m_f_samples.router.js');
+
 
 const app = express();
 
@@ -17,5 +19,6 @@ app.use('/monitors/slickdeals', slickDealsMonitorRouter);
 app.use('/monitors/mamadeals', mamaDealsRouter);
 app.use('/monitors/rebeldeals', rebelDealsRouter);
 app.use('/monitors/dealsofamerica', dealsOfAmericaRouter)
+app.use('/monitors/mfreesamples', mFreeSamplesRouter);
 
 module.exports = app;

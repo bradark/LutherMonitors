@@ -12,7 +12,7 @@ async function getLink(){
 
 async function getTestHook(){
     return new Promise((resolve, reject) => {
-        resolve(mDealsTestHook);
+        resolve(mDealsWebhook);
     });
 }
 

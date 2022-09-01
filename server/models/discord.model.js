@@ -9,19 +9,19 @@ const freebiesTesthook = 'https://discord.com/api/webhooks/1009674073841860690/h
 
 async function getHFWebhook(){
   return new Promise((resolve, reject) => {
-    resolve(highFilterTesthook);
+    resolve(highFilterWebhook);
   });
 }
 
 async function getPriceErrorWebhook(){
   return new Promise((resolve, reject) => {
-    resolve(priceErrorTesthook);
+    resolve(priceErrorWebhook);
   });
 }
 
 async function getFreebieWebhook(){
   return new Promise((resolve, reject) => {
-    resolve(freebiesTesthook);
+    resolve(freebiesWebhook);
   });
 }
 
