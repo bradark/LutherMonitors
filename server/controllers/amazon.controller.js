@@ -1,98 +1,76 @@
-const { MessageEmbed } = require('discord.js');
 const axios = require('axios');
 const cheerio = require('cheerio');
-const request = require('request');
 
-const isLink = 'https://www.amazon.com/dp/B09TBLBFXC/ref=olp-opf-redir?aod=1&f_new=true&f_primeEligible=true&tag=gibbrands0e-20&m=ATVPDKIKX0DER';
-const oosLink = 'https://www.amazon.com/dp/B08FC5L3RG/ref=olp-opf-redir?aod=1&f_new=true&f_primeEligible=true';
+const INTERVAL = 30000;
 
-const amazonConf = {
+const config = {
   headers: {
     'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
     'User-Agent':'Mozilla/5.0 (Windows NT 10.0; W in64; x64; rv:103.0) Gecko/20100101 Firefox/103.0',
   }
 }
 
-async function sendToWebhook(msg) {
-  var embed = {
-    author: {
-      name: "Twitter Bot for Discord - V0.0.1 - Dev"
-    },
-    title: `New Deal`,
-    description: msg
-  }
-  var options = { method: 'POST',
-    url: 'https://discord.com/api/webhooks/1002707656965894144/yGK4JA-4Zda8pwumhj7iv5XIBgLdIKiE3u4QfeoFi7DvOwZvv4l2FVcoZVpCbk9c7yHa',
-    headers:
-     { 'cache-control': 'no-cache',
-       'content-type': 'application/json' },
-    body: { embeds:[embed] },
-    json: true };
-
-  request(options, function (error, response, body) {
-    console.log('==> Amazon Restock webhook sent');
-  });
-}
-
-async function scrapeHtml(link){
+async function getProdPage(link){
   return new Promise((resolve, reject) => {
-    axios.get(link, amazonConf).then((res) => {
+    axios.get(link, config).then( async (res) => {
       resolve(res.data);
     }).catch((err) => {
-      reject(err);
-    })
-  });
-}
-
-async function inStock(html){
-  return new Promise((resolve, reject) => {
-    const $ = cheerio.load(html);
-    let stockStatus = 0;
-    if(($('a[id="sellerProfileTriggerId"]').text()).includes('Amazon.com') || ($('.mbcMerchantName').text()).includes('Amazon.com')){
-      resolve('In Stock');
-    }else{
-      resolve('OOS');
-    }
-  })
-}
-
-async function parseStockStatus(html){
-  const $ = cheerio.load(html);
-  console.log($('a[id="sellerProfileTriggerId"]').text());
-  console.log('\n');
-  console.log($('.mbcMerchantName').text());
-}
-
-async function checkStock(link){
-  return new Promise(async (resolve, reject) => {
-    scrapeHtml(link).then((html) => {
-      inStock(html).then((status) => {
-        resolve(status);
-      })
+      console.log(err);
+      resolve(err);
     });
   });
 }
 
-async function httpCheckStock(req, res){
-  checkStock(req.body.link).then((status) => {
-    res.send(status);
+async function parseStock(html){
+  return new Promise((resolve, reject) => {
+    const $ = cheerio.load(html);
+    try{
+      if($('[name=submit.addToCart]').attr('aria-label').includes('Add to Cart from seller Amazon.com')){
+        resolve('IN-STOCK');
+      }else{
+        resolve('OOS');
+      }
+    }catch(err){
+      resolve('OOS');
+    }
   });
+}
+
+async function buildLink(sku){
+  return new Promise((resolve, reject) => {
+    let link = `https://www.amazon.com/gp/product/ajax/ref=auto_load_aod?asin=${sku}&m=ATVPDKIKX0DER&pc=dp&experienceId=aodAjaxMain`;
+    resolve(link);
+  });
+}
+
+async function httpCheckStock(req, res){
+
 }
 
 async function start(){
 
 }
 
-async function test(link, testType){
-  scrapeHtml(link).then((html) => {
-    inStock(html).then((status) => {
-      console.log(`TESTING ${testType} LINK ==> ${status}`);
-    })
-  });
+async function test(sku){
+  let link = await buildLink(sku);
+  let prodPage = await getProdPage(link);
+  let stockStatus = await parseStock(prodPage);
+  console.log(`${sku} --- ${stockStatus}`);
 }
 
-test(isLink, 'IN STOCK');
-test(oosLink, 'OUT OF STOCK');
+async function monitor(sku){
+  let link = await buildLink(sku);
+  const interval = setInterval( async function() {
+    let prodPage = await getProdPage(link);
+    let stockStatus = await parseStock(prodPage);
+    if(stockStatus == 'IN-STOCK'){
+      console.log(`${sku} --- ${stockStatus}`);
+    }
+  }, INTERVAL);
+}
+
+test('B09QL5BRZH');
+monitor('B09QL5BRZH');
 
 module.exports = {
   start,
