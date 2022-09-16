@@ -90,7 +90,12 @@ async function parseNewPosts(html){
 
 async function getStatus(req, res) {
     res.send(STATUS);  
-  }
+}
+
+async function getDealsList(req, res){
+  let deals = await getDeals();
+  res.send(deals);
+}
 
 async function test(){
     let link = await getLink();
@@ -111,4 +116,5 @@ monitor();
 
 module.exports = {
     getStatus,
+    getDealsList,
 }

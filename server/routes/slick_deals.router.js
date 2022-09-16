@@ -1,9 +1,10 @@
 const express = require('express');
 
-const { getStatus } = require('./../controllers/slick_deals.controller.js');
+const { getStatus, getDealsList } = require('./../controllers/slick_deals.controller.js');
 
 const sDealsRouter = express.Router();
 
 sDealsRouter.get('/status', getStatus);
+sDealsRouter.get('/deals', getDealsList);
 
 module.exports = sDealsRouter;

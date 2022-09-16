@@ -138,10 +138,13 @@ async function monitor(){
     }, monitorIntervarl);
 }
 
-async function getStatus(){
-    return new Promise((resolve, reject) => {
-        resolve(STATUS);
-    });
+async function getStatus(req, res){
+  res.send(STATUS);
+}
+
+async function getDealsList(req, res){
+  let deals = await getDeals();
+  res.send(deals);
 }
 
 //testFilters('Oop definitely a price error last night! Hope y’all grabbed one ! https://t.me/rebeldealz/61532Telegram Post Link: https://t.me/rebeldealz/61655');
@@ -150,4 +153,5 @@ monitor();
 
 module.exports = {
     getStatus,
+    getDealsList,
 }

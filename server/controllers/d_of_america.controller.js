@@ -78,14 +78,18 @@ async function monitor() {
   }, monitorIntervarl)
 }
 
-async function getStatus(){
-  return new Promise((resolve, reject) => {
-    resolve(STATUS);
-  });
+async function getStatus(req, res){
+  res.send(STATUS);
+}
+
+async function getFreebieList(req, res){
+  let freebies = await getFreebies();
+  res.send(freebies);
 }
 
 monitor();
 
 module.exports = {
   getStatus,
+  getFreebieList,
 }

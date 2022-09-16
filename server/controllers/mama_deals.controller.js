@@ -111,8 +111,14 @@ async function loadData(html){
     res.send(STATUS);  
   }
 
+  async function getDealsList(req, res){
+    let deals = await getDeals();
+    res.send(deals);
+  }
+
   monitor();
 
   module.exports = {
     getStatus,
+    getDealsList,
   }
