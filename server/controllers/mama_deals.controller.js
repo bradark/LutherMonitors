@@ -89,9 +89,11 @@ async function loadData(html){
           addDeal(`${dealTxt}`);
           if(dealTxt.toLowerCase().includes('run') || dealTxt.toLowerCase().includes('stacking')){
             sendToHFWebhook(`${dealTxt}`);
+            sendToLogHook(`${dealTxt}`, 'https://discord.com/api/webhooks/1034614883049816164/3pkcMGR1RXCXfEL2zeH9TZM-B4rZXapdcz9Fj3MBOPbjM7p-Q1Q3JD8TrGw16syYnMba')
           }
           if(dealTxt.toLowerCase().includes('error') || dealTxt.toLowerCase().includes('glitch')){
             sendToPriceErrorWebhook(`${dealTxt}`);
+            sendToLogHook(`${dealTxt}`, 'https://discord.com/api/webhooks/1034614883049816164/3pkcMGR1RXCXfEL2zeH9TZM-B4rZXapdcz9Fj3MBOPbjM7p-Q1Q3JD8TrGw16syYnMba')
           }
           sendToWebhook(`${dealTxt}`, await getTestHook());
       }

@@ -3,7 +3,7 @@ const cheerio = require('cheerio');
 
 const { getDeals, addDeal, getLink, getTesthook } = require('./../models/slick_deals.model');
 
-const { sendToWebhook, sendToHFWebhook, sendToPriceErrorWebhook } =  require('./../controllers/discord.controller');
+const { sendToWebhook, sendToHFWebhook, sendToPriceErrorWebhook, sendToLogHook } =  require('./../controllers/discord.controller');
 
 const monitorIntervarl = 150000;
 
@@ -61,11 +61,14 @@ async function parsePosts(html){
         addDeal($(element).text());
         if($(element).text().toLowerCase().includes('price error') || $(element).text().toLowerCase().includes('price mistake') || $(element).text().toLowerCase().includes('error') || $(element).text().toLowerCase().includes('mistake') || $(element).text().toLowerCase().includes('glitch')){
                 sendToPriceErrorWebhook(`${$(element).text()} https://slickdeals.net${$(element).attr('href')}`);
+                sendToLogHook(`${$(element).text()} https://slickdeals.net${$(element).attr('href')}`, 'https://discord.com/api/webhooks/1034614883049816164/3pkcMGR1RXCXfEL2zeH9TZM-B4rZXapdcz9Fj3MBOPbjM7p-Q1Q3JD8TrGw16syYnMba')
         }
         if($(element).text().toLowerCase().includes('limited edition') || $(element).text().toLowerCase().includes('limited release')){
             sendToHFWebhook(`${$(element).text()} https://slickdeals.net${$(element).attr('href')}`);
+            sendToLogHook(`${$(element).text()} https://slickdeals.net${$(element).attr('href')}`, 'https://discord.com/api/webhooks/1034614883049816164/3pkcMGR1RXCXfEL2zeH9TZM-B4rZXapdcz9Fj3MBOPbjM7p-Q1Q3JD8TrGw16syYnMba')
         }
         sendToWebhook(`${$(element).text()} https://slickdeals.net${$(element).attr('href')}`, await getTesthook());
+        
       }
     }
   });
