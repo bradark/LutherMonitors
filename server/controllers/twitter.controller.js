@@ -5,10 +5,10 @@ const { getWebhook, getTesthook } = require('./../models/twitter.model');
 const { sendToWebhook, sendToHFWebhook, sendToPriceErrorWebhook } =  require('./../controllers/discord.controller');
 
 const twitterClient = new Twitter({
-   consumer_key: '',
-   consumer_secret: '',           
-   access_token_key: '',
-   access_token_secret: ''
+   consumer_key: 'qoQZEmPST47FRFpURVJE7BjeM',
+   consumer_secret: 'KBO5TMsPHCrgoXwxWP63FVZBR8Jlh7gbcBDAx755xFCpvcEoUi',           
+   access_token_key: '4438948518-cbAiENxLanrwuzWEMYovFXUUGVeClELc0bfL5JV',
+   access_token_secret: '4QKvX6CaFqe7fKTeehp0oUGrQHIxnF0dRkwnxFBI69skL'
 });
 
 const filters = {

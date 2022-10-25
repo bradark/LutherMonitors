@@ -62,14 +62,7 @@ async function parsePosts(html){
         if($(element).text().toLowerCase().includes('price error') || $(element).text().toLowerCase().includes('price mistake') || $(element).text().toLowerCase().includes('error') || $(element).text().toLowerCase().includes('mistake') || $(element).text().toLowerCase().includes('glitch')){
                 sendToPriceErrorWebhook(`${$(element).text()} https://slickdeals.net${$(element).attr('href')}`);
         }
-        if($(element).text().toLowerCase().includes('99%') || $(element).text().toLowerCase().includes('98%') ||
-           $(element).text().toLowerCase().includes('97%') || $(element).text().toLowerCase().includes('96%') ||
-           $(element).text().toLowerCase().includes('95%') || $(element).text().toLowerCase().includes('94%') ||
-           $(element).text().toLowerCase().includes('93%') || $(element).text().toLowerCase().includes('92%') ||
-           $(element).text().toLowerCase().includes('91%') || $(element).text().toLowerCase().includes('90%') ||
-           $(element).text().toLowerCase().includes('89%') || $(element).text().toLowerCase().includes('88%') ||
-           $(element).text().toLowerCase().includes('limited edition') || $(element).text().toLowerCase().includes('limited release')
-        ){
+        if($(element).text().toLowerCase().includes('limited edition') || $(element).text().toLowerCase().includes('limited release')){
             sendToHFWebhook(`${$(element).text()} https://slickdeals.net${$(element).attr('href')}`);
         }
         sendToWebhook(`${$(element).text()} https://slickdeals.net${$(element).attr('href')}`, await getTesthook());
