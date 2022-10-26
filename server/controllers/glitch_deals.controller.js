@@ -7,6 +7,8 @@ const { sendToWebhook, sendToHFWebhook, sendToPriceErrorWebhook } =  require('./
 
 const monitorIntervarl = 60000;
 
+let logHook = "";
+
 let STATUS = 'STOPPED';
 
 async function scrapeHtml(link){
@@ -81,7 +83,7 @@ async function parseNewPosts(html){
         addDeal(dealData);
         if(dealData.deal_text.toLowerCase().includes('glitch') || dealData.deal_text.toLowerCase().includes('error')){
             sendToPriceErrorWebhook(`${text} \n **LINK:** ${link}`);
-            sendToLogHook(`${text} \n **LINK:** ${link}`, 'https://discord.com/api/webhooks/1034614883049816164/3pkcMGR1RXCXfEL2zeH9TZM-B4rZXapdcz9Fj3MBOPbjM7p-Q1Q3JD8TrGw16syYnMba')
+            sendToLogHook(`${text} \n **LINK:** ${link}`, logHook)
         }
         sendToWebhook(`${text} \n **LINK:** ${link}`, await getTesthook());
         console.log(dealData);
